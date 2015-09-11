@@ -132,6 +132,8 @@ public class ContentAssistPreference {
 			triggers += ">"; //$NON-NLS-1$
 		if (useDoubleColonAsTrigger)
 			triggers += ":"; //$NON-NLS-1$
+		// enable automatic activation ...
+		triggers += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; //$NON-NLS-1$
 		ccp.setCContentAutoActivationCharacters(triggers);
 
 		boolean dotTriggersAutoReplace = store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
