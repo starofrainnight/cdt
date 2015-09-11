@@ -98,21 +98,18 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private int compare(IString rhsName) throws CoreException {
 		int cmp;
 		if (prefixLookup) {
-			if( matchChars == null ) {
-				return 1;
-			}
-			
-			if( matchChars.length <= 0 ) {
-				return 1;
+			if( ( matchChars == null ) || ( matchChars.length <= 0 ) ) {
+				return rhsName.comparePrefix( matchChars, false );
 			}
 			
 			// considering search speed, we assume user will input the correct
 			// letter at the first letter.
 			char [] temp = { matchChars[0] };
-			cmp = rhsName.comparePrefix( temp, false );
-			
+
 			if (caseSensitive) {
-				cmp= cmp==0 ? rhsName.comparePrefix(temp, true) : cmp;
+				cmp = rhsName.comparePrefix( temp, true );
+			} else {
+				cmp = rhsName.comparePrefix( temp, false );
 			}
 		} else {
 			if (caseSensitive) {
