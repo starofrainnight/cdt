@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -97,9 +98,21 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private int compare(IString rhsName) throws CoreException {
 		int cmp;
 		if (prefixLookup) {
-			cmp= rhsName.comparePrefix(matchChars, false);
+			if( matchChars == null ) {
+				return 1;
+			}
+			
+			if( matchChars.length <= 0 ) {
+				return 1;
+			}
+			
+			// considering search speed, we assume user will input the correct
+			// letter at the first letter.
+			char [] temp = { matchChars[0] };
+			cmp = rhsName.comparePrefix( temp, false );
+			
 			if (caseSensitive) {
-				cmp= cmp == 0 ? rhsName.comparePrefix(matchChars, true) : cmp;
+				cmp= cmp==0 ? rhsName.comparePrefix(temp, true) : cmp;
 			}
 		} else {
 			if (caseSensitive) {
