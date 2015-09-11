@@ -355,6 +355,9 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 					return false;
 				}
 				return true;
+				
+			default:
+				return true;
 			}
 		} catch (BadLocationException e) {
 		}
