@@ -358,13 +358,14 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 				
 			default:
 				// before we activate the content assist, there must  
-				// have at least an alphabetic prefix !
-				if( offset < 0 ) {
+				// have at least two alphabetic prefix !
+				if( offset < 2  ) {
 					return false;
-				}
+				}				
 				
-				activationChar = doc.getChar(--offset);
-				if( Character.isJavaIdentifierPart(activationChar) ) {
+				char activationChar0 = doc.getChar(--offset);
+				char activationChar1 = doc.getChar(--offset);
+				if( Character.isJavaIdentifierPart(activationChar0) && Character.isJavaIdentifierPart(activationChar1) ) {
 					return true;
 				}
 				
