@@ -56,86 +56,32 @@ public class SegmentMatcher {
 			char currentChar;
 			int segmentCount = 0;
 			
-			// Translate each segment
-			while (i < pattern.length) {
-
-				boolean separatorSpecified = false;
-
-				// Handle prefix, i.e. anything before the first letter or digit
-				for (; i < pattern.length; ++i) {
-					currentChar = pattern[i];
-					if (Character.isLetterOrDigit(currentChar)) {
-						break;
-					} else {
-						// Quote those characters.
-						regexpBuffer.append(Pattern.quote(String.valueOf(currentChar)));
-						separatorSpecified = true;
-					}
-				}
-
-				if (i < pattern.length) {
-					// The character here is always a letter or digit.
-					currentChar = pattern[i];
-
-					if (Character.isDigit(currentChar)) {
-
-						// Handle number segment
-						regexpBuffer.append(currentChar);
-						for (++i; i < pattern.length; ++i) {
-							currentChar = pattern[i];
-							if (Character.isDigit(currentChar)) {
-								regexpBuffer.append(currentChar);
-							} else {
-								break;
-							}
-						}
-
-					} else {
-
-						// Handle text segment
-						char lower = Character.toLowerCase(currentChar);
-						char upper = Character.toUpperCase(currentChar);
-
-						if ((segmentCount == 0) || separatorSpecified) {
-							regexpBuffer.append(currentChar);
-						} else {
-							regexpBuffer.append("(_["); //$NON-NLS-1$
-							regexpBuffer.append(lower);
-							regexpBuffer.append(upper);
-							regexpBuffer.append("]|"); //$NON-NLS-1$
-							regexpBuffer.append(upper);
-							regexpBuffer.append(')');
-						}
-
-						// Remaining letters of the segment
-						for (++i; i < pattern.length; ++i) {
-
-							currentChar = pattern[i];
-							if (Character.isLetter(currentChar)) {
-								if (Character.isUpperCase(currentChar)) {
-									break;
-								} else {
-									lower = currentChar;
-									upper = Character.toUpperCase(currentChar);
-									regexpBuffer.append('[');
-									regexpBuffer.append(lower);
-									regexpBuffer.append(upper);
-									regexpBuffer.append(']');
-								}
-							} else {
-								break;
-							}
-						}
-					}
-				}
-				regexpBuffer.append(".*"); //$NON-NLS-1$
-				
-				if (segmentCount == 0) {
-					lengthOfFirstSegment = i;
-				}
-				
-				++segmentCount;
-			}
+			char lower = 0;
+			char upper = 0;
+			
+			/*
+			 * allow user input any letters appear in the target string.
+			 */
+			for( i = 0; i < pattern.length; ++ i ) {
+				currentChar = pattern[i];
+				if (Character.isDigit(currentChar)) {
+				regexpBuffer.append(currentChar);
+				} else if ( Character.isLetter(currentChar) ) {
+					lower = Character.toLowerCase(currentChar);
+					upper = Character.toUpperCase(currentChar);
+					regexpBuffer.append('[');
+					regexpBuffer.append(lower);
+					regexpBuffer.append(upper);
+					regexpBuffer.append(']');
+				} else {
+					// Quote those characters.
+					regexpBuffer.append(Pattern.quote(String.valueOf(currentChar)));
+ 				}
+ 				
+				regexpBuffer.append( ".*" ); //$NON-NLS-1$
+ 			}
+			segmentCount = 2; // ok, just a trick to let it go ...
+			lengthOfFirstSegment = pattern.length;
 			
 			regexp = Pattern.compile(regexpBuffer.toString());
 			singleSegment = (segmentCount == 1);
